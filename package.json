@@ -1,0 +1,23 @@
+{
+  "name": "maze-solver",
+  "version": "1.0.0",
+  "description": "An implementation of A* algorithm, to find the shortest path inside a maze (with animation of pacman). ",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ghaith00/maze-solver.git"
+  },
+  "keywords": [
+    "nodejs",
+    "phaser"
+  ],
+  "author": "Ghaith Tabib, Bilel Aouadhi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ghaith00/maze-solver/issues"
+  },
+  "homepage": "https://github.com/Ghaith00/maze-solver#readme"
+}
