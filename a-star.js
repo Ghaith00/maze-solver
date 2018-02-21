@@ -15,8 +15,8 @@ class Node {
   }
   // move const
   moveCost(){
-    if (this.value == 0) return 0;
-    else return 1;
+    if (this.value == 0) return 1;
+    else return 0;
   }
 }
 
@@ -33,9 +33,9 @@ class AStar {
     this.goal = goal;
   }
   // Heureustic |r1 - r | + |c1 - c|
-  manhattan(pointOne, pointTwo){
-    return Math.abs(pointOne.point[0] - pointTwo.point[0]) +
-           Math.abs(pointOne.point[1] - pointTwo.point[0]);
+  manhattan(pointOne, pointTwo){    
+    return Math.abs(pointOne.point.x - pointTwo.point.x) +
+           Math.abs(pointOne.point.y - pointTwo.point.x);
   }
   //
   lowestNodeCost(openList){
@@ -49,7 +49,7 @@ class AStar {
   // Is possible movment
   isPossibleMovement(x, y){
     if(x < 0 || y < 0 || y > this.maze.length-1 || x > this.maze[0].length-1 ) return false;
-    if(this.maze[x][y] == 1) return false;
+    if(this.maze[x][y].value == 1) return false;
     return true;
   }
   // Return the children list of given node
@@ -82,6 +82,14 @@ class AStar {
     }
     return false;
   }
+  // Filter array
+  filter(tab, node){
+    var temp = [];
+    for(let i=0; i < tab.length; i++){
+      if(!node.equal(tab[i])) temp.push(tab[i]);
+    }
+    return temp;
+  }
   // A*
   astar(){
     var openList = [];
@@ -92,7 +100,14 @@ class AStar {
     openList.push(current);
     // while the open list is not empty
 
+    let iter = 0; // for debuging purpuse
     while(openList.length != 0){
+      
+      iter++;
+      if(iter== 100000){
+        console.log(openList);
+        throw new Error("too much"+iter);
+      }
 
       // Find the item in open list with lowest g+h score
       current = this.lowestNodeCost(openList);
@@ -103,12 +118,13 @@ class AStar {
           path.push(current);
           current = current.parent;
         }
-        path.push(currrent);
+        path.push(current);
+        
         return path;
       }
-
       //Remove the item from the open list
-      openList = openList.filter(function(node) {return node.equal(current);});
+      openList = this.filter(openList, current); //openList.filter(function(node) {return node.equal(current);});
+      
       // Add to closed list
       closedList.push(current);
 
@@ -121,6 +137,7 @@ class AStar {
               continue;
           //Otherwise if it is already in the open set
           if(this.nodeInArray(node, openList)){
+            console.log("a");
             //Check if we beat the G score
             let newG = current.g + current.moveCost();
             // If so, update the node to have a new parent
@@ -129,17 +146,25 @@ class AStar {
               node.parent = current;
             }
 
-          } else {
+          } else {            
             //If it isn't in the open set, calculate the G and H score for the node
             node.g = current.g + current.moveCost();
             node.h = this.manhattan(node, this.goal);
             // Set the parent to our current item
-            node.parrent = current;
+            node.parent = current;
             // Add it to the set
-            openList.push(node);
+            openList.push(node);            
           }
       }
     }
+    var path = [];
+    while(current.parent){
+      path.push(current);
+      current = current.parent;
+    }
+    path.push(current);
+    
+    return path;
     console.log("No solution");
   }
 
@@ -150,7 +175,7 @@ class AStar {
         this.maze[i][j] = new Node(this.maze[i][j], i, j);
       }
     }
-    var path  = this.astar();
+    var path  = this.astar();    
     return path;
   }
 }
